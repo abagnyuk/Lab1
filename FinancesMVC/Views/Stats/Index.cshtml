@@ -1,0 +1,139 @@
+﻿@model IEnumerable<FinancesMVC.Models.Stat>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Recent statistics</h1>
+
+@* <table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CalculatedExpances)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChosenCategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CalculatedExpances)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChosenCategory.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Id)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+ *@
+<div style="display: flex; justify-content: space-between;">
+    <div style="margin-top:5%;" class="row">
+        <div class="col-3">
+            <div style="background-color: rgba(255, 255, 255, 0.7);" id="totalSpentByDayChart"></div>
+        </div>
+    </div>
+
+    <div style="margin-top:5%;" class="row">
+        <div class="col-3">
+            <div style="background-color: rgba(255, 255, 255, 0.7); width: 600px; height: 400px;" id="spentByCategoriesChart"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {
+        callback: function () {
+            drawByDayCharts();
+        },
+        packages: ['line']
+    });
+    google.charts.load('current', {
+        callback: function () {
+            drawByCategoriesCharts();
+        },
+        packages: ['corechart']
+    });
+
+    function drawByDayCharts() {
+        fetch('/api/charts/spentByDay')
+            .then(response => response.json())
+            .then(data => {
+                var dataTable = new google.visualization.DataTable();
+                dataTable.addColumn('string', 'Day');
+                dataTable.addColumn('number', 'Expenditures');
+
+                data.forEach(item => {
+                    const date = item.day + ' ' + item.month;
+                    dataTable.addRow([date, item.moneySpent]);
+                });
+
+                const options = {
+                    chart: {
+                        title: 'Money spent by days',
+                        // subtitle: 'in millions of dollars (USD)'
+                    },
+                    width: 600,
+                    height: 400,
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                };
+
+                const chart = new google.charts.Line(document.getElementById('totalSpentByDayChart'));
+
+                chart.draw(dataTable, google.charts.Line.convertOptions(options));
+            });
+    }
+
+    function drawByCategoriesCharts() {
+        fetch('/api/charts/spentByCategories')
+            .then(response => response.json())
+            .then(data => {
+                // Add headers
+                const dataTable = [['Category', 'Money Spent']];
+
+                // Convert JSON data into an array for the DataTable
+                for (const item of data) {
+                    dataTable.push([item.category, item.moneySpent]);
+                }
+
+                // Pass the formatted data to arrayToDataTable()
+                const chartData = google.visualization.arrayToDataTable(dataTable);
+
+                const options = { title: 'Money Spent By Categories', is3D: true };
+                const chart = new google.visualization.PieChart(document.getElementById('spentByCategoriesChart'));
+                chart.draw(chartData, options);
+            });
+    }
+
+</script>

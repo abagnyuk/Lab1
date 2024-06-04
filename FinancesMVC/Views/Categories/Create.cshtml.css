@@ -1,0 +1,20 @@
+﻿.form-group {
+    margin-bottom: 5%;
+    margin-left: 0;
+}
+
+.container {
+    margin-left: -6%;
+}
+
+.table-wrapper {
+    background-color: rgba(255, 255, 255, 0.7);
+    width: 90%;
+    height: 80%;
+    position: absolute;
+    padding: 2.1%;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    transform: translate(-50%, -50%); /* Key for precise centering */
+}

@@ -1,0 +1,8 @@
+﻿.form-group{
+    margin-bottom:5%;
+    width:100%;
+}
+
+.text-danger {
+    background-color: orange !important;
+}

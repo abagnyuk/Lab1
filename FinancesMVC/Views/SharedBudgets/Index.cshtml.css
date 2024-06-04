@@ -1,0 +1,89 @@
+﻿#create-btn {
+    border-radius: 100%;
+}
+
+.table {
+    position: relative;
+}
+
+.table-head {
+    font-size: 18px;
+}
+
+.btn btn-primary btn-green {
+    background-color: green !important; /* Example green color */
+    border-color: green !important;
+}
+
+.btn-red {
+    position: absolute; /* Make button absolute relative to the table */
+    top: 50%; /* Vertical centering */
+    right: 10px; /* Horizontal positioning from the right edge */
+    transform: translateY(-50%);
+}
+
+.table-content tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.table {
+    table-layout: fixed;
+    width: 100%; /* optional, set the table width */
+}
+
+    .table th,
+    .table td {
+        width: calc(100% / 4); /* adjust the divisor as needed */
+        text-align: center; /* optional, center the content */
+    }
+
+.table-content td:first-child { /* Targets the first td in each row */
+    width: auto; /* Or set a specific width */
+    text-align: left; /* Or use another alignment */
+}
+
+.table-head th:first-child { /* Targets the first td in each row */
+    width: auto; /* Or set a specific width */
+    text-align: left; /* Or use another alignment */
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0 10px; /* No vertical spacing, 10px horizontal spacing */
+}
+
+td, th {
+    padding: 11px;
+}
+
+.tr-disabled{
+    background-color:black !important;
+}
+
+.table-wrapper {
+    background-color: rgba(255, 255, 255, 0.7);
+    width: 90%;
+    height: 80%;
+    position: absolute;
+    padding: 2.1%;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    transform: translate(-50%, -50%); /* Key for precise centering */
+    overflow-y: auto; /* Or overflow-y: scroll if you always want a scrollbar */
+}
+
+    .table-wrapper::-webkit-scrollbar {
+        width: 10px; /* Adjust scrollbar width */
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Color for the scrollbar track */
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background-color: rgb(128, 128, 128, 0.5); /* Color for the scrollbar thumb */
+        border-radius: 5px; /* Add rounded corners to the thumb */
+    }

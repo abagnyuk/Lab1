@@ -1,0 +1,147 @@
+﻿@model IEnumerable<FinancesMVC.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+<div style="display: flex; width:auto; gap:5%; justify-content: space-between; margin-bottom:1%;">
+    <a class="btn btn-outline-primary d-flex align-items-center" style="font-size: 18px;"
+       asp-action="Index" asp-route-id="@ViewBag.CategoryId">Back to List</a>
+    <h1><i>Last expenditures on</i> "@ViewBag.CategoryName"</h1>
+    <a class="btn btn-primary d-flex align-items-center" style="font-size: 18px;"
+       asp-action="Create" asp-route-id="@ViewBag.CategoryId" asp-route-name="@ViewBag.CategoryName">Add new expenditure</a>
+    
+
+</div>
+
+
+@if (Model.Count() != 0)
+{
+
+    <table class="table">
+        <thead class="table-head">
+            <tr id="head">
+                <th>
+                    @Html.DisplayNameFor(model => model.ExpenditureNote)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MoneySpent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="table-content">
+            @foreach (var item in Model.Reverse())
+            {
+                <tr data-id="@item.Id">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExpenditureNote)
+                    </td>
+                    <td>
+
+                        @Html.DisplayFor(modelItem => item.MoneySpent)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@item.Id" asp-route-categoryId="@ViewBag.CategoryId"
+                              asp-route-categoryName="@ViewBag.CategoryName" method="post">
+                            <button type="submit" class="btn btn-outline-danger"
+                                    onclick="return openTransactionDeleteConfirmation(this.closest('form'));">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+}
+else
+{
+    <h2>There is no expenditures yet :/</h2>
+}
+<form asp-action="DeleteCategory" asp-route-id="@ViewBag.CategoryId">
+    <button style="margin-top:1%" type="submit" class="btn btn-danger"
+            onclick="return openCategoryDeleteConfirmation(this.closest('form'));">
+        Delete Category
+    </button>
+</form>
+
+<script>
+    const tableRows = document.querySelectorAll('table tr');
+    tableRows.forEach(row => {
+        if (row.id != 'head') {
+            row.addEventListener('click', () => {
+                const id = row.dataset.id;
+                // Option 1: Redirect
+                window.location.href = `/Transactions/Edit/${id}?categoryId=${@ViewBag.CategoryId}`;
+
+                // Option 2: AJAX Call (requires more setup)
+                // $.ajax(...)
+            });
+        }
+    });
+
+    function openTransactionDeleteConfirmation(form) {
+        if (confirm("Are you sure you want to delete this recording?")) {
+            form.submit(); // Submit the form if confirmed
+            return true;
+        } else {
+            return false; // Prevent submission if not confirmed
+        }
+    }
+
+    function openCategoryDeleteConfirmation(form) {
+        if (confirm("Are you sure you want to delete this category?")) {
+            form.submit(); // Submit the form if confirmed
+            return true;
+        } else {
+            return false; // Prevent submission if not confirmed
+        }
+    }
+
+    window.onload = function () {
+        const tableRows = document.querySelectorAll('table tr');
+        const tableCells = document.querySelectorAll('table td');
+
+        // Apply white background with opacity to table rows
+        tableRows.forEach(row => {
+            if (row.id !== 'head') {
+                row.style.backgroundColor = modifyColorWithOpacity(row.style.backgroundColor, 0.4);
+            }
+        });
+
+        // Apply white background with opacity to table cells
+        tableCells.forEach(cell => {
+            cell.style.backgroundColor = modifyColorWithOpacity(cell.style.backgroundColor, 0.4);
+        });
+
+        // ... (Your existing code for color codes, click events and openDeleteConfirmation) ...
+
+        // Helper function to modify color with opacity (updated for white background)
+        function modifyColorWithOpacity(color, opacity) {
+            if (color.startsWith('rgb')) { // Handle RGB or RGBA colors
+                const isRGBA = color.indexOf(',') > -1;
+                const rgbaValues = color.match(/\d+/g); // Extract numeric color values
+
+                // Ensure white background with desired opacity
+                rgbaValues[0] = rgbaValues[1] = rgbaValues[2] = '255';
+                if (!isRGBA) rgbaValues.push(opacity.toString());
+
+                return `rgba(${rgbaValues.join(', ')})`;
+            } else { // Assume other color formats (e.g., hex)
+                const colorObj = new Option().style;
+                colorObj.color = color || '#ffffff'; // Use white as default if no color exists
+                return colorObj.color.replace(/\)$/, `, ${opacity})`);
+            }
+        }
+    };
+
+</script>
